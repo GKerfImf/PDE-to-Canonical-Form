@@ -4,12 +4,12 @@ Y = function('Y')(x)
 
 forget()
 
-Test = 1
+Test = 2                                                               #  <= Тут теперь 2
 if Test == 0:
     dxx = x; dxy = 2*x; dyy = (x-1)
     dx = 0; dy = 0
     d = 0
-    eqForX = x < 0
+    eqForX = x == x
     eqForY = Y(x) == Y(x)
 elif Test == 1:
     dxx = Y(x)^2; dxy = 2*x*Y(x); dyy = -3*x^2
@@ -17,6 +17,12 @@ elif Test == 1:
     d = 0
     eqForX = x > 0
     eqForY = Y(x) > 0
+elif Test == 2:                                                          #  <= Добавил этот блок
+    dxx = Y(x)^2; dxy = 2*x*Y(x); dyy = 2*x^2
+    dx = 0; dy = 0
+    d = 0
+    eqForX = x == x
+    eqForY = Y(x) == Y(x)
 
 m = matrix(2, 2, [dxx,dxy/2, dxy/2,dyy])
 det = m.det().simplify_full()
@@ -48,19 +54,6 @@ if len(dlh0) > 0:
         u = solve(f1, _C)[0]; u = u.rhs()
         v = solve(f2, _C)[0]; v = v.rhs()
 
-elif len(deq0) > 0:
-    print 'det == 0'
-    show('det == 0,', deq0)
-    assume(deq0)
-
-    f1(x,y,_C) = desolve(ODEs[0], Y)
-    f2(x,y,_C) = Y(x)                                # <= тут можно указать свою ф-ю, если det == 0
-    show("y1 = ",f1, "; y2 = ", f2)
-
-    try: u = solve(Y(x) == f1, _C)[0]; u = u.rhs().subs(Y(x) == y)
-    except: u = solve(f1, _C)[0]; u = u.rhs().subs(Y(x) == y)
-    v = f2; v = v.subs(Y(x) == y)
-
 elif len(dgt0) > 0:
     print 'det:'
     show('det > 0,', dgt0)
@@ -73,11 +66,24 @@ elif len(dgt0) > 0:
         t1 = solve(Y(x) == f1, _C)[0]; t1 = t1.rhs().subs(Y(x) == y)
         t2 = solve(Y(x) == f2, _C)[0]; t2 = t2.rhs().subs(Y(x) == y)
     except:
-        t1 = solve(f1, _C)[0]; t1 = t1.rhs()
-        t2 = solve(f2, _C)[0]; t2 = t2.rhs()
+        t1 = solve(f1, _C)[0]; t1 = t1.rhs().subs(Y(x) == y)
+        t2 = solve(f2, _C)[0]; t2 = t2.rhs().subs(Y(x) == y)
 
     u = (t1 + t2).real() / 2
     v = (t1 - t2).imag() / 2
+
+elif len(deq0) > 0:
+    print 'det == 0'
+    show('det == 0,', deq0)
+    #assume(deq0)
+
+    f1(x,y,_C) = desolve(ODEs[0], Y)
+    f2(x,y,_C) = Y(x)                                # <= тут можно указать свою ф-ю, если det == 0
+    show("y1 = ",f1, "; y2 = ", f2)
+
+    try: u = solve(Y(x) == f1, _C)[0]; u = u.rhs().subs(Y(x) == y)
+    except: u = solve(f1, _C)[0]; u = u.rhs().subs(Y(x) == y)
+    v = f2; v = v.subs(Y(x) == y)
 
 
 print 'Получили такую замену:'
@@ -102,4 +108,3 @@ Uyy = Uy.diff(y); show("U_yy = ", Uyy.simplify_full())
 print 'Канонический вид:'
 t = (dxx*Uxx + dxy*Uxy + dyy*Uyy + dx*Ux + dy*Uy + d*U).subs(Y == y) == 0;
 t = t.simplify_full().expand(); t.show()
-︡
