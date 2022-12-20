@@ -4,7 +4,7 @@ Y = function('Y')(x)
 
 forget()
 
-Test = 0                                                             #  <= Тут теперь 2
+Test = 0                                                            
 if Test == 0:
     dxx = x; dxy = 2*x; dyy = (x-1)
     dx = 0; dy = 0
@@ -17,7 +17,7 @@ elif Test == 1:
     d = 0
     eqForX = x > 0
     eqForY = Y(x=x) > 0
-elif Test == 2:                                                          #  <= Добавил этот блок
+elif Test == 2:                                                       
     dxx = Y(x=x)^2; dxy = 2*x*Y(x=x); dyy = 2*x^2
     dx = 0; dy = 0
     d = 0
@@ -28,10 +28,10 @@ m = matrix(2, 2, [dxx,dxy/2, dxy/2,dyy])
 det = m.det().simplify_full()
 show("det", m.subs(Y(x=x) == y), " = ", det.subs(Y(x=x) == y))
 
-print('Характеристическое уравнение: ')
+print('Characteristic equation: ')
 cEq = dxx * diff(Y,x)^ 2 - dxy * diff(Y,x) + dyy == 0; show(cEq.subs(Y(x=x) == y))
 
-print('Решили диффур: ')
+print('Obtained the following diff. equation: ')
 ODEs = solve(cEq, diff(Y,x)); show(ODEs)
 
 dlh0 = solve( [det < 0,  eqForX, eqForY ], x,y)
@@ -78,7 +78,7 @@ elif len(deq0) > 0:
     #assume(deq0)
 
     f1(x,y,_C) = desolve(ODEs[0], Y)
-    f2(x,y,_C) = Y(x=x)                                # <= тут можно указать свою ф-ю, если det == 0
+    f2(x,y,_C) = Y(x=x)
     show("y1 = ",f1, "; y2 = ", f2)
 
     try: u = solve(Y(x=x) == f1, _C)[0]; u = u.rhs().subs(Y(x=x) == y)
@@ -86,11 +86,11 @@ elif len(deq0) > 0:
     v = f2; v = v.subs(Y(x=x) == y)
 
 
-print('Получили такую замену:')
+print('The resulting substitution:')
 show(u.simplify_full())
 show(v.simplify_full())
 
-print('Якобиан замены:')
+print('Jacobian of the substitution:')
 show(matrix(2,2, [diff(u,x), diff(u,y), diff(v,x), diff(v,y)]).det().simplify_full())
 
 try:
@@ -98,13 +98,13 @@ try:
 except:
     U = function('U')(u(x,y),v(x,y))
 
-print('Всякая фигня:')
+print('Other stuff:')
 Ux = U.diff(x); show("U_x = ", Ux.simplify_full())
 Uy = U.diff(y); show("U_y = ", Uy.simplify_full())
 Uxx = Ux.diff(x); show("U_xx = ", Uxx.simplify_full())
 Uxy = Ux.diff(y); show("U_xy = ", Uxy.simplify_full())
 Uyy = Uy.diff(y); show("U_yy = ", Uyy.simplify_full())
 
-print('Канонический вид:')
+print('Canonical form:')
 t = (dxx*Uxx + dxy*Uxy + dyy*Uyy + dx*Ux + dy*Uy + d*U).subs(Y == y) == 0;
 t = t.simplify_full().expand(); t.show()
