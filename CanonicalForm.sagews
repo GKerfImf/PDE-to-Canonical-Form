@@ -1,14 +1,14 @@
-x, y = var('x y')
-_C = var('_C')
-Y = function('Y')(x)
+x, y, _C = var('x y _C')
 
-forget()
+# Example: 
+# Initial equation: x^2 u_xx − 2xy u_xy + y^2 u_yy + x u_x + y u_y = 0
+# Canonical form: η^2 w_ηη + η w_η = 0
 
-dxx = x; dxy = 2*x; dyy = (x-1)
-dx = 0; dy = 0
+dxx = x^2; dxy = -2*x*y; dyy = y^2
+dx = x; dy = y
 d = 0
-eqForX = x == x
-eqForY = Y(x=x) == Y(x=x)
+eqForX = x > 0
+eqForY = y == y
 
 # dxx = x; dxy = 2*x; dyy = (x-1)
 # dx = 0; dy = 0
@@ -28,8 +28,27 @@ eqForY = Y(x=x) == Y(x=x)
 # eqForX = x == x
 # eqForY = Y(x=x) == Y(x=x)
 
+# ---- ---- ---- ----  ---- ---- ---- ----  ---- ---- ---- ----  ---- ---- ---- ----
+
+Y = function('Y')(x)
+dxx = dxx.subs(y == Y(x=x))
+dxy = dxy.subs(y == Y(x=x))
+dyy = dyy.subs(y == Y(x=x))
+dx = dx.subs(y == Y(x=x))
+dy = dy.subs(y == Y(x=x))
+d = d.subs(y == Y(x=x))
+eqForX = eqForX.subs(y == Y(x=x))
+eqForY = eqForY.subs(y == Y(x=x))
+
+# ---- ---- ---- ----  ---- ---- ---- ----  ---- ---- ---- ----  ---- ---- ---- ----  
+
 m = matrix(2, 2, [dxx, dxy/2, dxy/2, dyy])
-det = m.det().simplify_full()
+det = m.det()
+try:
+    det = det.simplify_full()
+except:
+    ()
+
 show("det", m.subs(Y(x=x) == y), " = ", det.subs(Y(x=x) == y))
 
 show('\nCharacteristic equation: ')
@@ -89,8 +108,8 @@ elif len(deq0) > 0:
 
 
 show('\nThe resulting substitution:')
-show(u.simplify_full())
-show(v.simplify_full())
+show(f"ξ → {u.simplify_full()}")
+show(f"η → {v.simplify_full()}")
 
 show('\nJacobian of the substitution:')
 matrix(2,2, [diff(u,x), diff(u,y), diff(v,x), diff(v,y)]).det().simplify_full().show()
@@ -98,7 +117,7 @@ matrix(2,2, [diff(u,x), diff(u,y), diff(v,x), diff(v,y)]).det().simplify_full().
 try:
     U = function('U')(u,v)
 except:
-    U = function('U')(u(x,y),v(x,y))
+    U = function('U')(u(x=x,y=y), v(x=x,y=y))
 
 show('\nOther stuff:')
 Ux = U.diff(x); show("U_x = ", Ux.simplify_full())
@@ -108,5 +127,5 @@ Uxy = Ux.diff(y); show("U_xy = ", Uxy.simplify_full())
 Uyy = Uy.diff(y); show("U_yy = ", Uyy.simplify_full())
 
 show('\nCanonical form:')
-t = (dxx*Uxx + dxy*Uxy + dyy*Uyy + dx*Ux + dy*Uy + d*U).subs(Y == y) == 0;
+t = (dxx*Uxx + dxy*Uxy + dyy*Uyy + dx*Ux + dy*Uy + d*U).subs(Y(x=x) == y) == 0;
 t = t.simplify_full().expand(); t.show()
