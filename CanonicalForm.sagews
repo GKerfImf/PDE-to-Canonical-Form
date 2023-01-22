@@ -1,6 +1,6 @@
 x, y, _C = var('x y _C')
 
-# Example: 
+# Example:
 # Initial equation: x^2 u_xx − 2xy u_xy + y^2 u_yy + x u_x + y u_y = 0
 # Canonical form: η^2 w_ηη + η w_η = 0
 
@@ -40,7 +40,7 @@ d = d.subs(y == Y(x=x))
 eqForX = eqForX.subs(y == Y(x=x))
 eqForY = eqForY.subs(y == Y(x=x))
 
-# ---- ---- ---- ----  ---- ---- ---- ----  ---- ---- ---- ----  ---- ---- ---- ----  
+# ---- ---- ---- ----  ---- ---- ---- ----  ---- ---- ---- ----  ---- ---- ---- ----
 
 m = matrix(2, 2, [dxx, dxy/2, dxy/2, dyy])
 det = m.det()
@@ -99,11 +99,11 @@ elif len(deq0) > 0:
     f2(x,y,_C) = Y(x=x)
     show("y1 = ",f1, "; y2 = ", f2)
 
-    try: 
+    try:
         u = solve(Y(x=x) == f1, _C)[0]; u = u.rhs().subs(Y(x=x) == y)
-    except: 
+    except:
         u = solve(f1, _C)[0]; u = u.rhs().subs(Y(x=x) == y)
-        
+
     v = f2; v = v.subs(Y(x=x) == y)
 
 
